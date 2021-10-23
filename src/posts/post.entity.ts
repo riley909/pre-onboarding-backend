@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { User } from 'src/auth/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -13,5 +14,6 @@ export class Post {
   content: string;
 
   @ManyToOne((_type) => User, (user) => user.posts, { eager: true })
+  @Exclude({ toPlainOnly: true })
   user: User;
 }
