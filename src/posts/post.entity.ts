@@ -13,6 +13,12 @@ export class Post {
   @Column()
   content: string;
 
+  @Column()
+  created: string;
+
+  @Column()
+  status: string;
+
   @ManyToOne((_type) => User, (user) => user.posts, { eager: true })
   @Exclude({ toPlainOnly: true })
   user: User;
