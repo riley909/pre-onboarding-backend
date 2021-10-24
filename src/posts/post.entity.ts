@@ -5,7 +5,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class Post {
   @PrimaryGeneratedColumn()
-  id: number;
+  postId: number;
 
   @Column()
   title: string;
@@ -19,7 +19,7 @@ export class Post {
   @Column()
   status: string;
 
-  @ManyToOne((_type) => User, (user) => user.posts, { eager: true })
+  @ManyToOne((_type) => User, (user) => user.posts, { eager: false })
   @Exclude({ toPlainOnly: true })
   user: User;
 }
