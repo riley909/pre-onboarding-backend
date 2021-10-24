@@ -14,4 +14,8 @@ export class PostsService {
   getPosts(filterDto: GetPostsFilterDto): Promise<Post[]> {
     return this.postsRepository.getPosts(filterDto);
   }
+
+  getPostById(id: number): Promise<Post> {
+    return this.postsRepository.getPostById(id);
+  }
 }
