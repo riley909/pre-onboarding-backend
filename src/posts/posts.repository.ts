@@ -5,6 +5,7 @@ import {
 import { EntityRepository, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 import { PostStatus } from './post-status.enum';
 import { Post } from './post.entity';
 
@@ -46,6 +47,16 @@ export class PostsRepository extends Repository<Post> {
       content,
       status: PostStatus.OPEN,
     });
+    await this.save(post);
+    return post;
+  }
+
+  async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
+    const { title, content } = updatePostDto;
+    const post = await this.getPostById(id);
+
+    post.title = title;
+    post.content = content;
     await this.save(post);
     return post;
   }
