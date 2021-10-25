@@ -18,6 +18,8 @@ import { configValidationSchema } from './config.schema';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'sqlite',
+        autoLoadEntities: true,
+        synchronize: true,
         database: configService.get('DB_DATABASE'),
         entities: [__dirname + configService.get('DB_ENTITIES')],
       }),
