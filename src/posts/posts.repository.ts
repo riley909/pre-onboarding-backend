@@ -8,6 +8,7 @@ import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostStatus } from './post-status.enum';
 import { Post } from './post.entity';
+import * as dayjs from 'dayjs';
 
 @EntityRepository(Post)
 export class PostsRepository extends Repository<Post> {
@@ -41,10 +42,12 @@ export class PostsRepository extends Repository<Post> {
 
   async createPost(createPostDto: CreatePostDto): Promise<Post> {
     const { title, content } = createPostDto;
+    const now: string = dayjs().format('YYYY-MM-DD');
 
     const post = this.create({
       title,
       content,
+      created: now,
       status: PostStatus.OPEN,
     });
     await this.save(post);
