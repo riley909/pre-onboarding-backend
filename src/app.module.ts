@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
@@ -11,10 +11,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ConfigModule.forRoot({
       envFilePath: [`.env.stage.${process.env.STAGE}`],
     }),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'posts.db',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'sqlite',
+        database: configService.get('DB_DATABASE'),
+        entities: [__dirname + configService.get('DB_ENTITIES')],
+      }),
     }),
     PostsModule,
     AuthModule,
