@@ -7,13 +7,16 @@ import {
   Query,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
+@UseGuards(AuthGuard())
 export class PostsController {
   constructor(private postsService: PostsService) {}
 
