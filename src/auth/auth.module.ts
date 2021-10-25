@@ -11,7 +11,7 @@ import { UsersRepository } from './users.repository';
   imports: [
     ConfigModule,
     TypeOrmModule.forFeature([UsersRepository]),
-    PassportModule.register({}),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
