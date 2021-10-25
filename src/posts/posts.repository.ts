@@ -10,12 +10,15 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { PostStatus } from './post-status.enum';
 import { Post } from './post.entity';
 import * as dayjs from 'dayjs';
+import { User } from 'src/auth/user.entity';
 
 @EntityRepository(Post)
 export class PostsRepository extends Repository<Post> {
-  async getPosts(filterDto: GetPostsFilterDto): Promise<Post[]> {
+  async getPosts(filterDto: GetPostsFilterDto, user: User): Promise<Post[]> {
     const { search } = filterDto;
     const query = this.createQueryBuilder('post');
+
+    query.where({ user });
 
     if (search) {
       query.andWhere(
@@ -32,8 +35,8 @@ export class PostsRepository extends Repository<Post> {
     }
   }
 
-  async getPostById(id: number): Promise<Post> {
-    const found = await this.findOne(id);
+  async getPostById(id: number, user: User): Promise<Post> {
+    const found = await this.findOne({ where: { id, user } });
 
     if (!found) {
       throw new NotFoundException(`게시글 ID "${id}"번이 존재하지 않습니다.`);
@@ -41,7 +44,7 @@ export class PostsRepository extends Repository<Post> {
     return found;
   }
 
-  async createPost(createPostDto: CreatePostDto): Promise<Post> {
+  async createPost(createPostDto: CreatePostDto, user: User): Promise<Post> {
     const { title, content } = createPostDto;
     const now: string = dayjs().format('YYYY-MM-DD');
 
@@ -50,14 +53,19 @@ export class PostsRepository extends Repository<Post> {
       content,
       created: now,
       status: PostStatus.OPEN,
+      user,
     });
     await this.save(post);
     return post;
   }
 
-  async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
+  async updatePost(
+    id: number,
+    updatePostDto: UpdatePostDto,
+    user: User,
+  ): Promise<Post> {
     const { title, content } = updatePostDto;
-    const post = await this.getPostById(id);
+    const post = await this.getPostById(id, user);
 
     post.title = title;
     post.content = content;
@@ -65,15 +73,15 @@ export class PostsRepository extends Repository<Post> {
     return post;
   }
 
-  async closePost(id: number): Promise<Post> {
-    const post = await this.getPostById(id);
+  async closePost(id: number, user: User): Promise<Post> {
+    const post = await this.getPostById(id, user);
     post.status = PostStatus.CLOSE;
     await this.save(post);
     return post;
   }
 
-  async deletePost(id: number): Promise<void> {
-    const post = await this.getPostById(id);
+  async deletePost(id: number, user: User): Promise<void> {
+    const post = await this.getPostById(id, user);
 
     if (!post) {
       throw new NotFoundException(`게시글 ID "${id}"번이 존재하지 않습니다.`);

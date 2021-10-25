@@ -10,6 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -21,32 +23,36 @@ export class PostsController {
   constructor(private postsService: PostsService) {}
 
   @Get()
-  getPosts(@Query() filterDto: GetPostsFilterDto) {
-    return this.postsService.getPosts(filterDto);
+  getPosts(@Query() filterDto: GetPostsFilterDto, @GetUser() user: User) {
+    return this.postsService.getPosts(filterDto, user);
   }
 
   @Get('/:id')
-  getPostById(@Param('id') id: number) {
-    return this.postsService.getPostById(id);
+  getPostById(@Param('id') id: number, @GetUser() user: User) {
+    return this.postsService.getPostById(id, user);
   }
 
   @Post()
-  createPost(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.createPost(createPostDto);
+  createPost(@Body() createPostDto: CreatePostDto, @GetUser() user: User) {
+    return this.postsService.createPost(createPostDto, user);
   }
 
   @Patch('/:id')
-  updatePost(@Param('id') id: number, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.updatePost(id, updatePostDto);
+  updatePost(
+    @Param('id') id: number,
+    @Body() updatePostDto: UpdatePostDto,
+    @GetUser() user: User,
+  ) {
+    return this.postsService.updatePost(id, updatePostDto, user);
   }
 
   @Patch('/:id/close')
-  closePost(@Param('id') id: number) {
-    return this.postsService.closePost(id);
+  closePost(@Param('id') id: number, @GetUser() user: User) {
+    return this.postsService.closePost(id, user);
   }
 
   @Delete('/:id')
-  deletePost(@Param('id') id: number) {
-    return this.postsService.deletePost(id);
+  deletePost(@Param('id') id: number, @GetUser() user: User) {
+    return this.postsService.deletePost(id, user);
   }
 }
