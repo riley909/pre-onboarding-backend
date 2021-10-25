@@ -3,7 +3,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
+import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
+import { PostStatus } from './post-status.enum';
 import { Post } from './post.entity';
 
 @EntityRepository(Post)
@@ -34,5 +36,17 @@ export class PostsRepository extends Repository<Post> {
       throw new NotFoundException(`게시글 ID "${id}"번이 존재하지 않습니다.`);
     }
     return found;
+  }
+
+  async createPost(createPostDto: CreatePostDto): Promise<Post> {
+    const { title, content } = createPostDto;
+
+    const post = this.create({
+      title,
+      content,
+      status: PostStatus.OPEN,
+    });
+    await this.save(post);
+    return post;
   }
 }
