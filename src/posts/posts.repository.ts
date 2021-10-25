@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -69,5 +70,21 @@ export class PostsRepository extends Repository<Post> {
     post.status = PostStatus.CLOSE;
     await this.save(post);
     return post;
+  }
+
+  async deletePost(id: number): Promise<void> {
+    const post = await this.getPostById(id);
+
+    if (!post) {
+      throw new NotFoundException(`게시글 ID "${id}"번이 존재하지 않습니다.`);
+    }
+
+    if (post.status === PostStatus.CLOSE) {
+      await this.delete(id);
+    } else {
+      throw new ConflictException(
+        `게시글 ID "${id}"번이 닫힌 상태가 아닙니다. 상태를 "CLOSE" 로 변경한 뒤 삭제해 주세요.`,
+      );
+    }
   }
 }

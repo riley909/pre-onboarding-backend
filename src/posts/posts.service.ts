@@ -32,4 +32,8 @@ export class PostsService {
   closePost(id: number): Promise<Post> {
     return this.postsRepository.closePost(id);
   }
+
+  deletePost(id: number): Promise<void> {
+    return this.postsRepository.deletePost(id);
+  }
 }

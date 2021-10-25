@@ -6,6 +6,7 @@ import {
   Param,
   Query,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
@@ -39,5 +40,10 @@ export class PostsController {
   @Patch('/:id/close')
   closePost(@Param('id') id: number) {
     return this.postsService.closePost(id);
+  }
+
+  @Delete('/:id')
+  deletePost(@Param('id') id: number) {
+    return this.postsService.deletePost(id);
   }
 }
