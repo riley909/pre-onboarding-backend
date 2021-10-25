@@ -28,4 +28,8 @@ export class PostsService {
   updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
     return this.postsRepository.updatePost(id, updatePostDto);
   }
+
+  closePost(id: number): Promise<Post> {
+    return this.postsRepository.closePost(id);
+  }
 }

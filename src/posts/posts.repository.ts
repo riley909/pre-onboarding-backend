@@ -60,4 +60,11 @@ export class PostsRepository extends Repository<Post> {
     await this.save(post);
     return post;
   }
+
+  async closePost(id: number): Promise<Post> {
+    const post = await this.getPostById(id);
+    post.status = PostStatus.CLOSE;
+    await this.save(post);
+    return post;
+  }
 }

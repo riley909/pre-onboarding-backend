@@ -35,4 +35,9 @@ export class PostsController {
   updatePost(@Param('id') id: number, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.updatePost(id, updatePostDto);
   }
+
+  @Patch('/:id/close')
+  closePost(@Param('id') id: number) {
+    return this.postsService.closePost(id);
+  }
 }
