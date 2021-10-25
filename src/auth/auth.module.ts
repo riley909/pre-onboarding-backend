@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
@@ -12,6 +13,16 @@ import { UsersRepository } from './users.repository';
     ConfigModule,
     TypeOrmModule.forFeature([UsersRepository]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        signOptions: {
+          expiresIn: `${configService.get('JWT_ACCESS_TOKEN_EXPIRATION')}d`,
+        },
+      }),
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
