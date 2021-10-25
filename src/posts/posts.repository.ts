@@ -14,11 +14,9 @@ import { User } from 'src/auth/user.entity';
 
 @EntityRepository(Post)
 export class PostsRepository extends Repository<Post> {
-  async getPosts(filterDto: GetPostsFilterDto, user: User): Promise<Post[]> {
+  async getPosts(filterDto: GetPostsFilterDto): Promise<Post[]> {
     const { search } = filterDto;
     const query = this.createQueryBuilder('post');
-
-    query.where({ user });
 
     if (search) {
       query.andWhere(

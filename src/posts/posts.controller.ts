@@ -10,7 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'src/auth/get-user.decorator';
+import { GetUser } from 'src/auth/decorator/get-user.decorator';
+import { Public } from 'src/auth/decorator/public.decorator';
 import { User } from 'src/auth/user.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
@@ -23,8 +24,9 @@ export class PostsController {
   constructor(private postsService: PostsService) {}
 
   @Get()
-  getPosts(@Query() filterDto: GetPostsFilterDto, @GetUser() user: User) {
-    return this.postsService.getPosts(filterDto, user);
+  @Public()
+  getPosts(@Query() filterDto: GetPostsFilterDto) {
+    return this.postsService.getPosts(filterDto);
   }
 
   @Get('/:id')

@@ -14,8 +14,8 @@ export class PostsService {
     private postsRepository: PostsRepository,
   ) {}
 
-  getPosts(filterDto: GetPostsFilterDto, user: User): Promise<Post[]> {
-    return this.postsRepository.getPosts(filterDto, user);
+  getPosts(filterDto: GetPostsFilterDto): Promise<Post[]> {
+    return this.postsRepository.getPosts(filterDto);
   }
 
   getPostById(id: number, user: User): Promise<Post> {
