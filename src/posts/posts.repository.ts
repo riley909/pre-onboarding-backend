@@ -2,6 +2,7 @@ import {
   ConflictException,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -64,12 +65,17 @@ export class PostsRepository extends Repository<Post> {
     user: User,
   ): Promise<Post> {
     const { title, content } = updatePostDto;
-    const post = await this.getPostById(id, user);
 
-    post.title = title;
-    post.content = content;
-    await this.save(post);
-    return post;
+    try {
+      const post = await this.getPostById(id, user);
+      if (title) post.title = title;
+      if (content) post.content = content;
+
+      await this.save(post);
+      return post;
+    } catch (e) {
+      throw new UnauthorizedException(`해당 사용자의 게시글이 아닙니다.`);
+    }
   }
 
   async closePost(id: number, user: User): Promise<Post> {
