@@ -79,18 +79,18 @@ export class PostsRepository extends Repository<Post> {
   }
 
   async closePost(id: number, user: User): Promise<Post> {
-    const post = await this.getPostById(id, user);
-    post.status = PostStatus.CLOSE;
-    await this.save(post);
-    return post;
+    try {
+      const post = await this.getPostById(id, user);
+      post.status = PostStatus.CLOSE;
+      await this.save(post);
+      return post;
+    } catch (e) {
+      throw new UnauthorizedException(`해당 사용자의 게시글이 아닙니다.`);
+    }
   }
 
-  async deletePost(id: number, user: User): Promise<void> {
+  async deletePost(id: number, user: User): Promise<string> {
     const post = await this.getPostById(id, user);
-
-    if (!post) {
-      throw new NotFoundException(`게시글 ID "${id}"번이 존재하지 않습니다.`);
-    }
 
     if (post.status === PostStatus.CLOSE) {
       await this.delete(id);
@@ -99,5 +99,6 @@ export class PostsRepository extends Repository<Post> {
         `게시글 ID "${id}"번이 닫힌 상태가 아닙니다. 상태를 "CLOSE" 로 변경한 뒤 삭제해 주세요.`,
       );
     }
+    return `게시글 ID "${id}"번이 완전히 삭제되었습니다.`;
   }
 }
