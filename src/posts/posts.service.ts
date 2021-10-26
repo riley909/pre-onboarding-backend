@@ -38,7 +38,7 @@ export class PostsService {
     return this.postsRepository.closePost(id, user);
   }
 
-  deletePost(id: number, user: User): Promise<void> {
+  deletePost(id: number, user: User): Promise<string> {
     return this.postsRepository.deletePost(id, user);
   }
 }
