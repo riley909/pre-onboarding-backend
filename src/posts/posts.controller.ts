@@ -14,7 +14,6 @@ import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { Public } from 'src/auth/decorator/public.decorator';
 import { User } from 'src/auth/user.entity';
 import { CreatePostDto } from './dto/create-post.dto';
-import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsService } from './posts.service';
 
@@ -25,8 +24,8 @@ export class PostsController {
 
   @Get()
   @Public()
-  getPosts(@Query() filterDto: GetPostsFilterDto) {
-    return this.postsService.getPosts(filterDto);
+  getPosts(@Query('take') take: number, @Query('page') page: number) {
+    return this.postsService.getPosts({ take, page });
   }
 
   @Get('/:id')

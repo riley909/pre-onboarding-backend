@@ -3,31 +3,32 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Like, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
-import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostStatus } from './post-status.enum';
 import { Post } from './post.entity';
 import * as dayjs from 'dayjs';
 import { User } from 'src/auth/user.entity';
+import { Pagination, PaginationOptions } from 'src/paginate';
 
 @EntityRepository(Post)
 export class PostsRepository extends Repository<Post> {
-  async getPosts(filterDto: GetPostsFilterDto): Promise<Post[]> {
-    const { search } = filterDto;
-    const query = this.createQueryBuilder('post');
+  async getPosts(options: PaginationOptions): Promise<Pagination<Post>> {
+    const { take, page } = options;
 
-    if (search) {
-      query.andWhere(
-        '(LOWER(post.title) LIKE LOWER(:search) OR LOWER(post.content) LIKE LOWER(:search))',
-        { search: `%${search}%` },
-      );
-    }
+    const [results, total] = await this.findAndCount({
+      select: ['postId', 'title', 'content', 'created', 'status', 'user'],
+      take: take,
+      skip: take * (page - 1),
+      order: { postId: 'DESC' },
+    });
 
     try {
-      const posts = await query.getMany();
-      return posts;
+      return new Pagination<Post>({
+        results,
+        total,
+      });
     } catch (e) {
       throw new InternalServerErrorException();
     }
