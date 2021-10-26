@@ -18,10 +18,10 @@ export class PostsRepository extends Repository<Post> {
     const { take, page } = options;
 
     const [results, total] = await this.findAndCount({
-      select: ['postId', 'title', 'content', 'created', 'status', 'user'],
+      select: ['id', 'title', 'content', 'created', 'status', 'user'],
       take: take,
       skip: take * (page - 1),
-      order: { postId: 'DESC' },
+      order: { id: 'DESC' },
     });
 
     try {
