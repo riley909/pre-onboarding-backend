@@ -1,0 +1,9 @@
+{
+  "type":"sqlite",
+  "database":"posts.db",
+  "entities":["dist/**/*.entity{.ts,.js}"],
+  "migrations":["dist/migration/*{.ts,.js}"],
+  "cli": {
+    "migrationsDir":"dist/migration"
+  }
+}
