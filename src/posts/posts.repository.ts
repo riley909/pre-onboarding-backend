@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Like, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostStatus } from './post-status.enum';
@@ -12,13 +12,22 @@ import { Post } from './post.entity';
 import * as dayjs from 'dayjs';
 import { User } from 'src/auth/user.entity';
 import { Pagination, PaginationOptions } from 'src/paginate';
+import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 
 @EntityRepository(Post)
 export class PostsRepository extends Repository<Post> {
-  async getPosts(options: PaginationOptions): Promise<Pagination<Post>> {
+  async getPosts(
+    options: PaginationOptions,
+    filterDto: GetPostsFilterDto,
+  ): Promise<Pagination<Post>> {
     const { take, page } = options;
+    const { status, search } = filterDto;
 
     const [results, total] = await this.findAndCount({
+      where: search && [
+        { title: Like(`%${search}%`) },
+        { content: Like(`%${search}%`) },
+      ],
       select: ['id', 'title', 'content', 'created', 'status', 'user'],
       take: take,
       skip: take * (page - 1),
