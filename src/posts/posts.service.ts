@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/user.entity';
 import { Pagination, PaginationOptions } from 'src/paginate';
 import { CreatePostDto } from './dto/create-post.dto';
+import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './post.entity';
 import { PostsRepository } from './posts.repository';
@@ -14,8 +15,11 @@ export class PostsService {
     private postsRepository: PostsRepository,
   ) {}
 
-  getPosts(options: PaginationOptions): Promise<Pagination<Post>> {
-    return this.postsRepository.getPosts(options);
+  getPosts(
+    options: PaginationOptions,
+    filterDto: GetPostsFilterDto,
+  ): Promise<Pagination<Post>> {
+    return this.postsRepository.getPosts(options, filterDto);
   }
 
   getPostById(id: number, user: User): Promise<Post> {
